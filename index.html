@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>index</title>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.js"></script>
+	<script type="text/javascript"
+		src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/jquery.validate.js"></script>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css"
+		integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+	<style>
+		.dp-fx {
+			display: flex;
+		}
+
+		.jy-ct {
+			justify-content: center;
+		}
+
+		.card-text {
+			text-align: center;
+		}
+
+		.pd-0 {
+			padding: 0;
+		}
+
+		.width-58 {
+			width: 58px;
+		}
+
+		.mg-10 {
+			margin: 10px;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-8 offset-sm-2">
+				<div class="card">
+					<div class="card-header">
+						<h3 class="card-text">Class Marksheet</h3>
+					</div>
+					<div class="card-body">
+						<form id="inforForm" method="post" class="form-horizontal" action="">
+							<div class="form-group row">
+								<label class="col-sm-4 col-form-label" for="name">Họ và tên</label>
+								<div class="col-sm-6">
+									<input type="text" class="form-control" id="name" name="name" />
+								</div>
+							</div>
+
+							<div class="form-group row">
+								<label class="col-sm-4 col-form-label" for="math">Điểm Toán</label>
+								<div class="col-sm-6">
+									<input type="text" class="form-control" id="math" name="math" />
+								</div>
+							</div>
+
+							<div class="form-group row">
+								<label class="col-sm-4 col-form-label" for="chemistry">Điểm Hóa</label>
+								<div class="col-sm-6">
+									<input type="text" class="form-control" id="chemistry" name="chemistry" />
+								</div>
+							</div>
+
+							<div class="form-group row">
+								<label class="col-sm-4 col-form-label" for="physical">Điểm Lý</label>
+								<div class="col-sm-6">
+									<input type="text" class="form-control" id="physical" name="physical" />
+								</div>
+							</div>
+							<div class="form-group row">
+								<div class="col-sm-9 offset-sm-4">
+									<button type="submit" class="btn btn-primary btn-add" name="signup"
+										value="Sign up">Nhập</button>
+									<button type="submit" class="btn btn-primary btn-update" name="signup"
+										value="Sign up">Update</button>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+		<table class="table table-bordered border-primary text-center" id="myTable">
+			<tr class="table-primary th">
+				<th scope="col" class="col-sm-1">STT</th>
+				<th scope="col" class="col-sm-3">Họ và tên</th>
+				<th scope="col" class="col-sm-1">Điểm Toán</th>
+				<th scope="col" class="col-sm-1">Điểm Hóa</th>
+				<th scope="col" class="col-sm-1">Điểm Lý</th>
+				<th scope="col" class="col-sm-2">Điểm Trung Bình</th>
+				<th scope="col" class="col-sm-3">Tùy chỉnh</th>
+			</tr>
+		</table>
+		<div class="dp-fx jy-ct">
+			<div>
+				<button type="button" class="btn btn-cal btn-primary mg-10">Tính điểm trung bình</button>
+			</div>
+			<div>
+				<button type="button" class="btn btn-rank btn-primary mg-10">Xác định học sinh giỏi</button>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+		$(document).ready(function () {
+			//Validate form
+			$("#inforForm").validate({
+				rules: {
+					name: "required",
+					math: {
+						required: true,
+						number: true,
+						range: [0, 10],
+					},
+					chemistry: {
+						required: true,
+						number: true,
+						range: [0, 10],
+					},
+					physical: {
+						required: true,
+						number: true,
+						range: [0, 10],
+					},
+				},
+				messages: {
+					name: "Please enter your name",
+					math: {
+						required: "Please enter your math score",
+					},
+					chemistry: {
+						required: "Please enter your chemistry score",
+					},
+					physical: {
+						required: "Please enter your physical score",
+					},
+					submitHandler: function (form) {
+						form.submit();
+					}
+				},
+				errorElement: "em",
+				errorPlacement: function (error, element) {
+					// Add the `invalid-feedback` class to the error element
+					error.addClass("invalid-feedback");
+
+					if (element.prop("type") === "checkbox") {
+						error.insertAfter(element.next("label"));
+					} else {
+						error.insertAfter(element);
+					}
+				},
+				highlight: function (element, errorClass, validClass) {
+					$(element).addClass("is-invalid").removeClass("is-valid");
+				},
+				unhighlight: function (element, errorClass, validClass) {
+					$(element).addClass("is-valid").removeClass("is-invalid");
+				}
+
+			});
+			var number = 0;
+			$('.btn-add').on('click', function (e) {
+				e.preventDefault(); //ngăn submit form
+				if ($("#inforForm").valid()) { //kiểm tra đk validate đúng hết hay chưa
+					//lấy giá trị ô input
+					var name = $('#name').val();
+					var math = $('#math').val();
+					var chemistry = $('#chemistry').val();
+					var physical = $('#physical').val();
+					//Khởi tạo array và object lưu giá trị
+					var data = [];
+					var testScore = {
+						name: name,
+						math: math,
+						chemistry: chemistry,
+						physical: physical
+					}
+					data.push(testScore);
+					//insert bảng
+					var row = data.map(function (x) {
+						number++;
+						return `
+							<tr>
+								<td>${number}</td>
+								<td>${x.name}</td>
+								<td>${x.math}</td>
+								<td>${x.chemistry}</td>
+								<td>${x.physical}</td>
+								<td>?</td>
+								<td>
+									<button type="button" class="btn-delete btn-primary pd-0 width-58" >Delete</button> 
+                                    <button type="button" class="btn-edit btn-primary pd-0 width-58">Edit</button>
+								</td>
+							</tr>`
+					});
+					let rows = row.join('');
+					$('#myTable').append(rows);
+					//clear input
+					$('#name').val('');
+					$('#math').val('');
+					$('#chemistry').val('');
+					$('#physical').val('');
+				}
+			});
+			//Tính điểm trung bình
+			$('.btn-cal').on('click', function () {
+				$('#myTable tr:gt(0)').each(function () {
+					var x = parseFloat($(this).find('td:eq(2)').text());
+					var y = parseFloat($(this).find('td:eq(3)').text());
+					var z = parseFloat($(this).find('td:eq(4)').text());
+					var avg = ((x + y + z) / 3).toFixed(1);
+					$(this).find('td:eq(5)').text(avg); //in ra giá trị đtb
+				})
+			})
+			//Xếp loại Hs giỏi
+			$('.btn-rank').on('click', function () {
+				$('#myTable tr:gt(0)').each(function () {
+					var avg = Number($(this).find('td:eq(5)').text());
+					if (avg >= 8) {
+						$(this).css({ "background-color": "red", "font-style": "italic" });
+					}
+				})
+			})
+			//Xóa hàng
+			$('#myTable').on('click', '.btn-delete', function () {
+				$(this).closest('tr').remove();
+			})
+			//Lấy giá trị trả về ô input
+			$('#myTable').on('click', '.btn-edit', function () {
+				$('#name').val($(this).closest('tr').find('td:eq(1)').text());
+				$('#math').val($(this).closest('tr').find('td:eq(2)').text());
+				$('#chemistry').val($(this).closest('tr').find('td:eq(3)').text());
+				$('#physical').val($(this).closest('tr').find('td:eq(4)').text());
+			})
+			//còn function update em chưa làm đc. Mentor có thể chỉ giúp em với ạ. EM CẢM ƠN!
+		});
+	</script>
+</body>
+
+</html>
